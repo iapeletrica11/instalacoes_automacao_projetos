@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IAP Instalações, Automação e Projetos</title>
+<meta name="description" content="Projetos elétricos, montagem de painéis e automação industrial, de acordo com a NR-12.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ===== CORES E FONTES (mude aqui para trocar o visual do site todo) ===== */
+:root{
+  --fundo:#eef1f4;      /* cinza de placa de montagem */
+  --tinta:#14233a;      /* azul escuro, usado em textos e faixas */
+  --suave:#4b5b72;      /* texto secundário */
+  --marca:#e8590c;      /* laranja de fio elétrico */
+  --linha:#c9d2dd;      /* bordas */
+  --branco:#fff;
+  --zap:#1fa855;        /* verde do WhatsApp */
+  --titulo:"Barlow Condensed","Arial Narrow",sans-serif;
+  --corpo:"IBM Plex Sans",Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{font:17px/1.6 var(--corpo);color:var(--tinta);background:var(--fundo)}
+h1,h2,h3{font-family:var(--titulo);line-height:1.1;font-weight:700}
+h1{font-size:clamp(2.4rem,6vw,4.2rem)}
+h2{font-size:clamp(1.8rem,4vw,2.6rem);margin-bottom:.4em}
+h3{font-size:1.4rem}
+p{max-width:68ch}
+section{padding:64px 20px}
+.wrap{max-width:1040px;margin:0 auto}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--marca);outline-offset:3px}
+
+/* Botão do WhatsApp (aparece em vários lugares) */
+.zap{display:inline-block;background:var(--zap);color:#fff;font-weight:500;text-decoration:none;padding:14px 26px;border-radius:6px}
+.zap:hover{filter:brightness(.92)}
+
+/* Topo */
+header{background:var(--tinta);color:#fff;padding:12px 20px;position:sticky;top:0;z-index:5}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;font:700 1.4rem var(--titulo)}
+.logo svg{color:#fff}
+.logo .polvo{width:40px;height:40px}
+.logo .iap{width:62px;height:30px}
+#marca{font:400 .78rem/1.15 var(--corpo);max-width:118px;color:#d5deea}
+header .zap{padding:9px 18px}
+
+/* Abertura */
+.hero{background:var(--tinta);color:#fff;padding:72px 20px 80px}
+.hero p{margin:18px 0 28px;color:#d5deea;font-size:1.15rem}
+.hero small{display:block;margin-top:16px;color:#aebbd0}
+
+/* Serviços e grades */
+.grade{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;margin-top:26px}
+.card{background:var(--branco);border:1px solid var(--linha);border-left:5px solid var(--marca);padding:22px;border-radius:4px}
+.card p{color:var(--suave);margin-top:8px}
+.card.destaque{background:var(--tinta);color:#fff}
+.card.destaque p{color:#d5deea}
+
+/* Normas (faixa escura) */
+.faixa{background:var(--tinta);color:#fff}
+.faixa li{margin:6px 0 6px 20px}
+.obs{margin-top:18px;color:#aebbd0;font-size:.95rem}
+
+/* Passos (esta lista é mesmo uma sequência) */
+ol.passos{list-style:none;padding:0;counter-reset:p;margin-top:24px}
+ol.passos li{counter-increment:p;padding:14px 0 14px 54px;border-top:1px solid var(--linha);position:relative}
+ol.passos li::before{content:counter(p);position:absolute;left:0;top:12px;width:34px;height:34px;border-radius:50%;background:var(--marca);color:#fff;font:700 1.2rem/34px var(--titulo);text-align:center}
+
+/* Trajetória */
+.linha-tempo{border-left:3px solid var(--marca);margin:24px 0 0 6px;padding-left:22px}
+.etapa{margin-bottom:22px}
+.etapa span{color:var(--suave);font-size:.95rem}
+
+/* Obras */
+.filtros{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.filtros button{font:inherit;padding:8px 16px;border:1px solid var(--tinta);background:none;border-radius:20px;cursor:pointer}
+.filtros button[aria-pressed=true]{background:var(--tinta);color:#fff}
+.obra img,.obra .semfoto{width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--linha);display:grid;place-items:center;color:var(--suave);border-radius:3px;margin-bottom:12px}
+
+/* Abas (Serviços / Sobre nós) */
+header nav{display:flex;gap:6px}
+header nav button{font:inherit;color:#fff;background:none;border:1px solid #5a6b85;border-radius:20px;padding:7px 14px;cursor:pointer}
+header nav button[aria-pressed=true]{background:var(--marca);border-color:var(--marca)}
+[hidden]{display:none!important} /* esconde o que não é da aba atual */
+.card ul{margin:10px 0 0 18px;color:var(--suave)}
+.obra small{display:block;color:var(--suave);margin-top:2px}
+.obra ul{margin-bottom:8px}
+footer a{text-decoration:underline}
+footer{background:var(--tinta);color:#d5deea;text-align:center;padding:40px 20px}
+footer a{margin:0 10px}
+
+/* Botão fixo do WhatsApp, sempre visível */
+.zap-fixo{position:fixed;right:16px;bottom:16px;z-index:9;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<!-- Desenho do polvo (reutilizado no topo e no rodapé). Tentáculos terminam em "pontos de conexão" -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="polvo" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+    <path d="M32 6c-10 0-18 7-18 17 0 6 3 10 6 12h24c3-2 6-6 6-12 0-10-8-17-18-17z"/>
+    <circle cx="26" cy="22" r="2.5" fill="currentColor" stroke="none"/><circle cx="38" cy="22" r="2.5" fill="currentColor" stroke="none"/>
+    <path d="M20 35c-2 8-8 10-12 10M27 35c0 9-4 14-8 17M37 35c0 9 4 14 8 17M44 35c2 8 8 10 12 10"/>
+    <g fill="#e8590c" stroke="none"><circle cx="8" cy="45" r="3.5"/><circle cx="19" cy="52" r="3.5"/><circle cx="45" cy="52" r="3.5"/><circle cx="56" cy="45" r="3.5"/></g>
+  </symbol>
+  <!-- Letras I, A e P da logo, desenhadas com traços grossos -->
+  <symbol id="iap" viewBox="0 0 90 44" fill="none" stroke="currentColor" stroke-width="8" stroke-linejoin="bevel">
+    <path d="M5 4V40"/>
+    <path d="M18 40L32 4L46 40M23 28H41"/>
+    <path d="M60 40V8H72a10 10 0 0 1 0 20H60"/>
+  </symbol>
+</svg>
+
+<header><div class="wrap">
+  <a class="logo" href="#topo" aria-label="IAP Instalações, Automação e Projetos"><svg class="polvo"><use href="#polvo"/></svg><svg class="iap"><use href="#iap"/></svg><span id="marca"></span></a>
+  <!-- Abas: data-aba deve ser igual ao data-aba das seções abaixo -->
+  <nav aria-label="Áreas do site">
+    <button data-aba="projetos">Serviços</button>
+    <button data-aba="sobre">Sobre nós</button>
+  </nav>
+  <a class="zap js-zap" href="#">Chamar no WhatsApp</a>
+</div></header>
+
+<main id="topo">
+  <section class="hero"><div class="wrap">
+    <h1 id="titulo"></h1>
+    <p id="subtitulo"></p>
+    <a class="zap js-zap" href="#">Pedir orçamento no WhatsApp</a>
+  </div></section>
+
+  <!-- ===== ABA PROJETOS ELÉTRICOS (principal) ===== -->
+  <section data-aba="projetos"><div class="wrap">
+    <h2>Escopo dos projetos</h2>
+    <div class="grade" id="lista-escopo"></div>
+  </div></section>
+
+  <!-- Opções de execução: cada etapa pode ser contratada separada ou junta -->
+  <section data-aba="projetos" style="background:var(--branco)"><div class="wrap">
+    <h2>Como podemos atuar</h2>
+    <p id="texto-opcoes"></p>
+    <div class="grade" id="lista-opcoes"></div>
+  </div></section>
+
+  <!-- Conhecimento técnico em acionamentos pneumáticos -->
+  <section data-aba="projetos" data-tecnico><div class="wrap">
+    <h2>Acionamentos pneumáticos</h2>
+    <p id="texto-pneumatica"></p>
+    <div class="grade" id="lista-pneumatica"></div>
+  </div></section>
+
+  <!-- Software e programação -->
+  <section data-aba="projetos" data-tecnico style="background:var(--branco)"><div class="wrap">
+    <h2>Software e programação</h2>
+    <p id="texto-software"></p>
+    <div class="grade" id="lista-software"></div>
+  </div></section>
+
+  <section data-aba="projetos" data-tecnico><div class="wrap">
+    <h2>Documentação entregue</h2>
+    <p id="texto-entregaveis"></p>
+    <div class="grade" id="lista-entregaveis"></div>
+  </div></section>
+
+  <section data-aba="projetos" data-tecnico style="background:var(--branco)"><div class="wrap">
+    <h2>Dimensionamento e informações necessárias</h2>
+    <div class="grade">
+      <div class="card"><h3>O que calculamos</h3><ul id="lista-calculos"></ul></div>
+      <div class="card"><h3>O que precisamos de você</h3><ul id="lista-precisa"></ul></div>
+    </div>
+  </div></section>
+
+  <section class="faixa" data-aba="projetos"><div class="wrap">
+    <h2>Segurança e normas</h2>
+    <p id="texto-normas"></p>
+    <ul id="lista-normas"></ul>
+    <p class="obs" id="obs-normas"></p>
+  </div></section>
+
+  <section data-aba="projetos"><div class="wrap">
+    <h2>Como funciona</h2>
+    <ol class="passos" id="lista-passos"></ol>
+    <p style="margin-top:20px"><a class="zap js-zap" href="#">Começar pelo WhatsApp</a></p>
+  </div></section>
+
+  <!-- Obras: mostra só as da aba atual (o título muda pelo JS) -->
+  <section id="obras" style="background:var(--branco)"><div class="wrap">
+    <h2 id="titulo-obras"></h2>
+    <div class="grade" id="lista-obras"></div>
+  </div></section>
+
+  <!-- Trajetória e depoimentos aparecem nas duas abas -->
+  <!-- Trajetória: agora só aparece na aba "Sobre nós" -->
+  <section id="trajetoria" data-aba="sobre" hidden><div class="wrap">
+    <h2>Nossa trajetória</h2>
+    <p id="resumo"></p>
+    <!-- Cartão do projetista responsável (preenchido pelo bloco DADOS.responsavel) -->
+    <div class="card" id="responsavel" style="margin-top:18px"></div>
+    <div class="linha-tempo" id="lista-etapas"></div>
+  </div></section>
+
+  <section id="depoimentos" style="background:var(--branco)"><div class="wrap">
+    <h2>O que os clientes dizem</h2>
+    <div class="grade" id="lista-depoimentos"></div>
+  </div></section>
+</main>
+
+<footer>
+  <svg width="44" height="44" style="color:#fff"><use href="#polvo"/></svg>
+  <p style="margin:8px auto" id="rodape"></p>
+  <p id="redes"></p>
+</footer>
+
+<a class="zap zap-fixo js-zap" href="#">WhatsApp</a>
+
+<script>
+/* =====================================================================
+   TUDO QUE APARECE NO SITE ESTÁ AQUI. Edite só os textos entre aspas.
+   Para adicionar um item (obra, depoimento, etapa), copie uma linha
+   inteira { ... }, cole logo abaixo e troque os textos.
+   Para remover, apague a linha inteira.
+   ===================================================================== */
+const DADOS = {
+
+  marca: "Instalações, Automação e Projetos",
+  titulo: "Projetos elétricos industriais e de automação",
+  subtitulo: "Projetos elétricos, painéis e automação para indústria, de acordo com a NR-12. Peça seu orçamento pelo WhatsApp.",
+
+  /* WhatsApp: só números, com 55 + DDD + número. TROQUE O NÚMERO ABAIXO! */
+  whatsapp: "5547992206512",
+  mensagemWhats: "Olá! Vi o site da IAP e gostaria de um orçamento.",
+
+  /* DETALHES TÉCNICOS: false = site simples (como está agora).
+     Quando quiser mostrar pneumática, software, documentação entregue, cálculos
+     e os itens técnicos de cada obra, troque para true. Nada foi apagado. */
+  mostrarTecnico: false,
+
+  /* Redes sociais: coloque o link. Deixe "" para esconder. */
+  instagram: "",
+  facebook: "",
+
+  /* ---------- ABA PROJETOS ELÉTRICOS ---------- */
+  projetos: {
+    /* destaque:true deixa o cartão escuro (use no serviço principal) */
+    escopo: [
+      { nome: "Projeto de comando e potência", destaque: true,
+        texto: "Projeto completo para máquinas e instalações industriais." },
+      { nome: "Automação com CLP, IHM e inversores",
+        texto: "Programação e ajustes para a máquina funcionar do jeito certo." },
+      { nome: "Segurança de máquinas (NR-12)",
+        texto: "Máquinas mais seguras para quem opera, conforme a NR-12." },
+      { nome: "Acionamentos pneumáticos",
+        texto: "Ar comprimido integrado ao comando da máquina." },
+      { nome: "Montagem de painéis elétricos",
+        texto: "Painéis montados conforme o projeto e testados antes da entrega." },
+      { nome: "Orçamentos industriais",
+        texto: "Proposta detalhada com escopo, prazo e o que está incluso." }
+    ],
+    /* ---- Como podemos atuar (opções) ---- */
+    textoOpcoes: "Cada etapa pode ser contratada separada ou em conjunto. Avaliamos cada caso e dizemos o que é possível fazer.",
+    opcoes: [
+      { nome: "Somente o projeto", texto: "Você recebe a documentação completa e executa com sua equipe." },
+      { nome: "Projeto e montagem do painel", texto: "Painel montado conforme o projeto, com teste antes da entrega." },
+      { nome: "Montagem e instalação no local", texto: "Instalação de painéis, cabos e acionamentos na sua máquina ou planta." },
+      { nome: "Programação e primeira partida", texto: "Programação, ajustes e acompanhamento da entrada em operação." }
+    ],
+
+    /* ---- Acionamentos pneumáticos ---- */
+    textoPneumatica: "Do dimensionamento à manutenção, integrando o ar comprimido ao comando elétrico e à segurança da máquina.",
+    pneumatica: [
+      { nome: "Cilindros e atuadores", texto: "Seleção por força, curso e velocidade: simples e duplo efeito, rotativos e garras." },
+      { nome: "Válvulas e ilhas de válvulas", texto: "Direcionais e solenoides ligados ao CLP, com fiação e endereçamento." },
+      { nome: "Tratamento e distribuição de ar", texto: "Unidade de conservação (filtro e regulador), pressão de trabalho, tubulação e conexões." },
+      { nome: "Sensores e fim de curso", texto: "Sensores magnéticos e de posição para o comando acompanhar o movimento." },
+      { nome: "Segurança pneumática (NR-12)", texto: "Despressurização e bloqueio do ar, válvulas com monitoramento e circuitos de duplo canal." },
+      { nome: "Dimensionamento e diagramas", texto: "Diâmetro do cilindro, consumo de ar e vazão, com diagrama pneumático em símbolos ISO 1219." },
+      { nome: "Manutenção e diagnóstico", texto: "Vazamentos, desgaste, ajuste de amortecimento e troca de componentes." }
+    ],
+
+    /* ---- Software e programação ---- */
+    textoSoftware: "Toda a parte de programação da máquina, do controle à interface com o operador.",
+    software: [
+      { nome: "Programação de CLP", texto: "Lógica de controle com sequências, intertravamentos e tratamento de falhas." },
+      { nome: "Telas de IHM", texto: "Telas de operação, alarmes e receitas, claras para o operador." },
+      { nome: "Parametrização de inversores", texto: "Rampas, limites, proteção do motor e comunicação com o CLP." },
+      { nome: "Redes e comunicação", texto: "Integração entre CLP, IHM, inversores e sensores por redes industriais." },
+      { nome: "Testes e documentação", texto: "Simulação antes da entrega, backup e documentação do programa." },
+      { nome: "Supervisão e dados (sob consulta)", texto: "Coleta de dados e painéis de acompanhamento da produção, avaliados caso a caso." }
+    ],
+
+    textoEntregaveis: "O que você recebe ao final, organizado como em projetos de grandes empresas.",
+    /* Apague o que você não entrega e acrescente o que entrega. */
+    entregaveis: [
+      { nome: "Diagrama unifilar", texto: "Visão geral da alimentação e das proteções." },
+      { nome: "Diagramas de potência e de comando", texto: "Circuitos completos, com referência cruzada." },
+      { nome: "Layout do painel", texto: "Vista de montagem com posição dos componentes." },
+      { nome: "Lista de materiais", texto: "Componentes com código, fabricante e quantidade." },
+      { nome: "Lista de cabos e bornes", texto: "Identificação de todas as ligações para montagem e manutenção." },
+      { nome: "Lista de entradas e saídas", texto: "Endereçamento dos sinais do CLP." },
+      { nome: "Memorial descritivo", texto: "Funcionamento, premissas e cálculos do projeto." },
+      { nome: "Revisões e versão final", texto: "Controle de revisões e documentação final para entrega." }
+    ],
+    calculos: [
+      "Condutores e queda de tensão",
+      "Proteções: disjuntores, fusíveis e relés térmicos",
+      "Corrente de curto-circuito e coordenação das proteções",
+      "Seleção de contatores, inversores e soft-starters",
+      "Fonte 24 Vdc e transformadores de comando",
+      "Ventilação e temperatura interna do painel",
+      "Cilindros, válvulas e consumo de ar comprimido"
+    ],
+    precisa: [
+      "Descrição do funcionamento da máquina ou do processo",
+      "Lista de motores e cargas (potência, tensão e frequência)",
+      "Tensão e rede disponíveis no local",
+      "Fotos, layout ou desenho mecânico",
+      "Pressão de trabalho e dados dos atuadores pneumáticos",
+      "Marcas preferidas de componentes, se houver",
+      "Normas exigidas pelo seu cliente e prazo desejado"
+    ],
+    passos: [
+      "Você chama no WhatsApp e descreve a máquina ou a instalação.",
+      "Levantamento das informações e definição do escopo.",
+      "Orçamento detalhado, com prazo e o que está incluso.",
+      "Desenvolvimento do projeto e revisão com você.",
+      "Entrega do projeto organizado e explicado a você."
+    ]
+  },
+
+  textoNormas: "Cada trabalho segue o que a norma pede, e explicamos isso a você antes de começar.",
+  normas: [
+    "NR-12: segurança em máquinas e equipamentos",
+    "NR-10: segurança em instalações elétricas",
+    "NBR 5410: instalações elétricas de baixa tensão",
+    /* PARA DEPOIS (mais técnico), cole acima quando quiser:
+       "NBR IEC 60204-1: equipamento elétrico de máquinas",
+       "NBR ISO 13849-1: partes de comando relacionadas à segurança",
+       "NBR ISO 4414: sistemas pneumáticos, requisitos de segurança" */
+  ],
+  /* Apague da lista acima qualquer norma que você não aplica. */
+  obsNormas: "Equipe técnica com formação em eletrotécnica e atualização contínua em automação.",
+
+  /* OBRAS: troque os EXEMPLOS abaixo pelas obras reais. Para cada obra:
+       tipo: sempre "industrial"
+       segmento: ramo do cliente (ex: "Indústria têxtil")
+       itens: lista do que foi usado/feito (ex: marcas, inversor, CLP, circuito de segurança)
+       norma: norma aplicada (opcional)
+       foto: caminho da imagem, ex "fotos/painel1.jpg" (deixe "" até ter a foto) */
+  obras: [
+    { tipo: "industrial", titulo: "Painel de comando de máquina têxtil", segmento: "Indústria têxtil",
+      texto: "Projeto elétrico e montagem do painel de comando.",
+      itens: ["Inversores de frequência", "CLP e IHM", "Circuito de segurança"], norma: "NR-12", foto: "" }
+  ],
+
+  resumo: "Nossa base técnica nasceu em obras e manutenção industrial e hoje se concentra em projetos de automação, acionamentos elétricos e pneumáticos e segurança de máquinas conforme a NR-12.",
+  /* ATENÇÃO: confirme nomes e anos e preencha o campo "quando". */
+  etapas: [
+    { quando: "Ano - Ano", onde: "Base em obras: Estruturar, Ijuí (RS)", texto: "Instalações elétricas em hospitais, escolas, frigoríficos, entradas de energia e medição de prédios, agência da Volkswagen em Uruguaiana, Sebrae em Lajeado e residências." },
+    { quando: "Ano - Ano", onde: "Iluminação pública: Prefeitura de Boa Vista do Cadeado (RS)", texto: "Manutenção da iluminação pública." },
+    { quando: "Ano - Ano", onde: "Instalações e manutenção: Meister, Pomerode (SC)", texto: "Instalação elétrica e hidráulica completa do Ales Park e manutenção pneumática industrial na Netzsch." },
+    { quando: "Ano - Ano", onde: "Painéis e máquinas têxteis: Delta Máquinas Têxteis", texto: "Montagem de painéis elétricos para máquinas têxteis." },
+    { quando: "Hoje", onde: "Projetos de automação industrial", texto: "Desenvolvimento de projetos de automação e acionamentos para máquinas têxteis, com foco em segurança conforme a NR-12." }
+  ],
+
+  /* Projetista responsável: aparece no começo da trajetória */
+  responsavel: {
+    nome: "Gabriel Jappe",
+    funcao: "Projetista responsável",
+    texto: "Técnico em eletrotécnica, cursando Engenharia de Software e em formação contínua na Alura. Atua em automação industrial, acionamentos elétricos e pneumáticos e segurança de máquinas (NR-12)."
+  },
+
+  depoimentos: [
+    { texto: "Escreva aqui o depoimento do cliente.", autor: "Nome do cliente, empresa ou cidade" }
+  ],
+
+  rodape: "IAP Instalações, Automação e Projetos."
+};
+
+/* =====================================================================
+   DAQUI PARA BAIXO É O CÓDIGO QUE MONTA A PÁGINA. Não precisa mexer.
+   ===================================================================== */
+const $ = id => document.getElementById(id);
+
+/* Escapa texto para que caracteres como < e & não quebrem a página */
+const esc = t => String(t).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* Textos simples */
+$("marca").textContent = DADOS.marca;
+$("titulo").textContent = DADOS.titulo;
+$("subtitulo").textContent = DADOS.subtitulo;
+$("texto-normas").textContent = DADOS.textoNormas;
+$("obs-normas").textContent = DADOS.obsNormas;
+$("resumo").textContent = DADOS.resumo;
+/* Cartão do projetista responsável */
+$("responsavel").innerHTML = `<h3>${esc(DADOS.responsavel.nome)}</h3><p><strong>${esc(DADOS.responsavel.funcao)}</strong></p><p>${esc(DADOS.responsavel.texto)}</p>`;
+$("rodape").textContent = DADOS.rodape;
+
+/* Todos os botões de WhatsApp usam o mesmo link */
+const linkZap = "https://wa.me/" + DADOS.whatsapp + "?text=" + encodeURIComponent(DADOS.mensagemWhats);
+document.querySelectorAll(".js-zap").forEach(a => { a.href = linkZap; a.target = "_blank"; a.rel = "noopener"; });
+
+/* Cartões simples (título + texto): usados em escopo, opções, pneumática, software e documentação */
+const cartoes = lista => lista.map(s =>
+  `<div class="card ${s.destaque ? "destaque" : ""}"><h3>${esc(s.nome)}</h3><p>${esc(s.texto)}</p></div>`).join("");
+/* Listas com marcadores */
+const itens = lista => lista.map(i => `<li>${esc(i)}</li>`).join("");
+
+$("lista-escopo").innerHTML = cartoes(DADOS.projetos.escopo);
+/* Novas seções: opções de atuação, pneumática e software */
+$("texto-opcoes").textContent = DADOS.projetos.textoOpcoes;
+$("lista-opcoes").innerHTML = cartoes(DADOS.projetos.opcoes);
+$("texto-pneumatica").textContent = DADOS.projetos.textoPneumatica;
+$("lista-pneumatica").innerHTML = cartoes(DADOS.projetos.pneumatica);
+$("texto-software").textContent = DADOS.projetos.textoSoftware;
+$("lista-software").innerHTML = cartoes(DADOS.projetos.software);
+$("texto-entregaveis").textContent = DADOS.projetos.textoEntregaveis;
+$("lista-entregaveis").innerHTML = cartoes(DADOS.projetos.entregaveis);
+$("lista-calculos").innerHTML = itens(DADOS.projetos.calculos);
+$("lista-precisa").innerHTML = itens(DADOS.projetos.precisa);
+$("lista-passos").innerHTML = itens(DADOS.projetos.passos);
+$("lista-normas").innerHTML = itens(DADOS.normas);
+
+/* Trajetória */
+$("lista-etapas").innerHTML = DADOS.etapas.map(e =>
+  `<div class="etapa"><h3>${esc(e.onde)}</h3><span>${esc(e.quando)}</span><p>${esc(e.texto)}</p></div>`).join("");
+
+/* Depoimentos */
+$("lista-depoimentos").innerHTML = DADOS.depoimentos.map(d =>
+  `<div class="card"><p>“${esc(d.texto)}”</p><p><strong>${esc(d.autor)}</strong></p></div>`).join("");
+
+/* Obras: mostra as obras do tipo pedido (aqui sempre "industrial") */
+function mostrarObras(tipo) {
+  const lista = DADOS.obras.filter(o => o.tipo === tipo);
+  $("titulo-obras").textContent = "Projetos e obras";
+  $("lista-obras").innerHTML = lista.length ? lista.map(o => `<div class="card obra">
+    ${o.foto ? `<img src="${esc(o.foto)}" alt="${esc(o.titulo)}" loading="lazy">` : `<div class="semfoto">Foto em breve</div>`}
+    <h3>${esc(o.titulo)}</h3><small>${esc(o.segmento || "")}</small><p>${esc(o.texto)}</p>${o.itens && DADOS.mostrarTecnico ? `<ul>${itens(o.itens)}</ul>` : ""}${o.norma && DADOS.mostrarTecnico ? `<small>Norma: ${esc(o.norma)}</small>` : ""}</div>`).join("") : "<p>Em breve.</p>";
+}
+
+/* Abas: troca o que aparece na tela. O endereço fica #projetos ou #sobre */
+function abrirAba(nome) {
+  /* "section[data-aba]" evita esconder os botões do topo, que também têm data-aba */
+  document.querySelectorAll("section[data-aba]").forEach(el => { /* esconde seção de outra aba OU seção técnica quando mostrarTecnico = false */
+    el.hidden = el.dataset.aba !== nome || (el.hasAttribute("data-tecnico") && !DADOS.mostrarTecnico); });
+  document.querySelectorAll("header nav button").forEach(b => b.setAttribute("aria-pressed", b.dataset.aba === nome));
+  /* Obras só aparecem na aba Serviços */
+  $("obras").hidden = nome === "sobre";
+  if (nome !== "sobre") mostrarObras("industrial");
+  history.replaceState(null, "", "#" + nome);
+}
+document.querySelector("header nav").addEventListener("click", e => { if (e.target.dataset.aba) abrirAba(e.target.dataset.aba); });
+/* Abre a aba pelo endereço (ex: seusite.com/#sobre). O padrão é Serviços */
+abrirAba(location.hash === "#sobre" ? "sobre" : "projetos");
+
+/* Redes sociais (só aparecem se o link estiver preenchido) */
+$("redes").innerHTML = [["Instagram", DADOS.instagram], ["Facebook", DADOS.facebook]]
+  .map(r => `<a href="${esc(r[1] || "#")}" target="_blank" rel="noopener">${r[0]}</a>`).join("");  /* sem link ainda = "#" */
+</script>
+</body>
+</html>
